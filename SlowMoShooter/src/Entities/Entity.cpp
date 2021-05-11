@@ -10,6 +10,10 @@ Entity::Entity()
 	dead = false;
 	velocity = sf::Vector2f();
 
+	acceleration = 1000;
+	deceleration = 600;
+	maxVelocity = 500;
+
 }
 
 Entity::~Entity()
@@ -37,8 +41,8 @@ const sf::Vector2f Entity::GetCenterPosition() const
 const sf::Vector2i Entity::GetGridPosition(const int gridSizeI) const
 {
 	return sf::Vector2i(
-		static_cast<int>(this->sprite.getPosition().x) / gridSizeI,
-		static_cast<int>(this->sprite.getPosition().y) / gridSizeI
+		static_cast<int>(sprite.getPosition().x) / gridSizeI,
+		static_cast<int>(sprite.getPosition().y) / gridSizeI
 	);
 }
 
@@ -101,10 +105,10 @@ void Entity::Die()
 
 void Entity::LooseHealthInv(int damage)
 {
-	if (this->invincibility == false) {
-		this->health -= damage;
-		this->invincibility = true;
-		this->invincibilityTimer = 0.f;
+	if (invincibility == false) {
+		health -= damage;
+		invincibility = true;
+		invincibilityTimer = 0.f;
 	}
 }
 
@@ -115,9 +119,10 @@ void Entity::LooseHealth(int damage)
 	}
 }
 
-void Entity::Move(const sf::Vector2f offset, const float dt)
+void Entity::Move(const sf::Vector2i dir, const float dt)
 {
-	sprite.move( maxVelocity * offset * dt);
+	inputDir = dir;
+	velocity += sf::Vector2f(dir) * acceleration * dt;
 }
 
 void Entity::SetPosition(const sf::Vector2f& pos)
@@ -131,5 +136,62 @@ void Entity::StopVelocity(bool x, bool y)
 		velocity.x = 0;
 	if (y)
 		velocity.y = 0;
+}
+
+void Entity::UpdateMovement(const float dt)
+{
+	//Decelareate the sprite and controls the amximum velocity moves the sprite
+	if (velocity.x > 0.f) { //checkh for positive x
+
+		//deceleration x positive
+		if(inputDir.x == 0)
+			velocity.x -= deceleration * dt;
+		if (velocity.x < 0.f)
+			velocity.x = 0.f;
+
+		//max velocity check
+		if (velocity.x > maxVelocity)
+			velocity.x = maxVelocity;
+	}
+	else if (velocity.x < 0.f) { //chechk for negative x
+
+		//decelaretion x negative
+		if (inputDir.x == 0)
+			velocity.x += deceleration * dt;
+		if (velocity.x > 0.f)
+			velocity.x = 0.f;
+
+		//max velocity chechk x negative
+		if (velocity.x < -maxVelocity)
+			velocity.x = -maxVelocity;
+	}
+
+	if (velocity.y > 0.f) { //checkh for positive y
+		//deceleration y positive
+		if (inputDir.y == 0)
+			velocity.y -= deceleration * dt;
+		if (velocity.y < 0.f)
+			velocity.y = 0.f;
+
+		//max velocity check
+		if (velocity.y > maxVelocity)
+			velocity.y = maxVelocity;
+	}
+	else if (velocity.y < 0.f) { //chechk for negative y
+		//decelaretion y negative
+		if (inputDir.y == 0)
+			velocity.y += deceleration * dt;
+		if (velocity.y > 0.f)
+			velocity.y = 0.f;
+
+		//max velocity chechk y negative
+		if (velocity.y < -maxVelocity)
+			velocity.y = -maxVelocity;
+	}
+
+	std::cout << velocity.x << "|" << velocity.y << " | " << maxVelocity << "\n";
+
+	//final move
+	sprite.move(velocity * dt); //uses velocity
 }
 

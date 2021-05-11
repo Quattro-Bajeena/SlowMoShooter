@@ -8,8 +8,13 @@ Player::Player() :
 	health = 10;
 	healthMax = 10;
 	dead = false;
+	dashing = false;
 
-	maxVelocity = 500;
+	acceleration = 4000;
+	deceleration = 5000;
+	maxVelocity = maxVelocityDefault = 1000;
+
+	dashVelocity = 1000;
 
 
 	texture.loadFromFile("Assets/schizo.png");
@@ -38,6 +43,27 @@ void Player::LooseHealthInv(int damage)
 	}
 }
 
+void Player::Move(const sf::Vector2i dir, const float dt)
+{
+	inputDir = dir;
+	if (dashing == false) {
+		velocity += sf::Vector2f(dir) * acceleration * dt;
+	}
+}
+
+void Player::StartDash()
+{
+	dashing = true;
+	maxVelocity = dashVelocity;
+	velocity = util::Normalize(velocity) * dashVelocity;
+}
+
+void Player::EndDash()
+{
+	dashing = false;
+	maxVelocity = maxVelocityDefault;
+}
+
 void Player::Update(const float dt)
 {
 	this->invincibilityTimer += dt;
@@ -49,6 +75,8 @@ void Player::Update(const float dt)
 	if (this->health <= 0) {
 		this->dead = true;
 	}
+
+	UpdateMovement(dt);
 }
 
 void Player::Render(sf::RenderTarget& target) const

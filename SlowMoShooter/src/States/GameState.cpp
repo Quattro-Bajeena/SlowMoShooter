@@ -23,18 +23,22 @@ void GameState::UpdateInput(const float dt)
 
 void GameState::UpdatePlayerInput(const float dt)
 {
+	sf::Vector2i dir = sf::Vector2i(0, 0);
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		player->Move(sf::Vector2f(-1.f, 0.f), dt);
+		dir += sf::Vector2i(-1, 0);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		player->Move(sf::Vector2f(1.f, 0.f), dt);
+		dir += sf::Vector2i(1, 0);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		player->Move(sf::Vector2f(0.f, -1.f), dt);
+		dir += sf::Vector2i(0, -1);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		player->Move(sf::Vector2f(0.f, 1.f), dt);
+		dir += sf::Vector2i(0, 1), dt;
 	}
+
+	player->Move(dir, dt);
 }
 
 GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)

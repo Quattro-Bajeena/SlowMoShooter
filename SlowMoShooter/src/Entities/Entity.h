@@ -13,8 +13,14 @@ protected:
 	float invincibilityTimer;
 	float invincibilityTimerMax;
 
+	//Movement
+	float acceleration;
+	float deceleration;
 	float maxVelocity;
+	
+
 	sf::Vector2f velocity;
+	sf::Vector2i inputDir;
 
 	//sf::Vector2f position;
 	//sf::FloatRect hitBox;
@@ -48,13 +54,13 @@ public:
 	virtual void Die();
 	virtual void LooseHealthInv(int damage);
 	virtual void LooseHealth(int damage);
-	virtual void Move(const sf::Vector2f offset, const float dt);
+	virtual void Move(const sf::Vector2i dir, const float dt);
 
 
-	
 	virtual void SetPosition(const sf::Vector2f& pos);
 	virtual void StopVelocity(bool x, bool y);
 
+	virtual void UpdateMovement(const float dt);
 	virtual void Update(const float dt) = 0;
 	virtual void Render(sf::RenderTarget& target) const = 0;
 };
