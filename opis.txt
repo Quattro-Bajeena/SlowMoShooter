@@ -1,0 +1,8 @@
+Jako projekt zamierzam użyć SFMLa do stworzenia gry typu twin-stick shooter/shoot 'em up z widokiem z góry. W trakcie rozgrywki gracz porusza się po mapie WSADem, a za pomocą myszki celuje i strzela do różnych rodzajów przeciwników, zbierając przy tym ulepszenia i modyfikacje broni i starając się przetrwać jak najdłużej. 
+Ważnym elementem będzie mechanika ograniczonego zatrzymywania lub spowolniania czasu, która pozwoli graczowi uzyskać przewagę nad groźnymi przeciwnikami.
+
+Aplikacja będzie wykorzystywała system stanów (np. menu, gry, ekranu końcowego) od których będzie zależeć jak w danej chwili będzie się aplikacja zachowywała.
+Każdy z nich będzie reprezentowany jako klasa, dziedzicząca z bazowej klasy "State". Będą one posiadały metody "Update" - w której będzie odbywała się logika, oraz "Render" - rysujące elementy na ekran.
+Ten podział na logikę i renderowanie będzie stosowany przez większość elementów gry, jak postać gracza, przeciwnicy, mapa czy przedmioty. 
+
+Architektura gry będzie korzystała z funkcjonalność programowania obiektowego, jak dziedziczenie (np. klasa "Entity" z której będą pochodziły klasy "Player" i "Enemy") i polimorfizm ("Enemy" może mieć kilka podklas, które będą się różniły, ale miały wspólny interfejs).
