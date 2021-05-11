@@ -1,5 +1,7 @@
 #pragma once
 #include "States/State.h"
+#include "Entities/Player.h"
+
 class GameState : public State
 {
 private:
@@ -7,10 +9,14 @@ private:
 	mutable sf::RenderTexture renderTexture;
 	mutable sf::Sprite renderSprite;
 
-	void EndState() override;
+	sf::Texture enemyTexture;
 
+	Player* player;
+
+	void EndState() override;
 	//void UpdateView(const float dt);
 	void UpdateInput(const float dt) override;
+	void UpdatePlayerInput(const float dt);
 	//void UpdateGui(const float dt);
 	//void UpdatePauseMenuButtons(const float dt);
 
@@ -24,7 +30,7 @@ public:
 	~GameState();
 
 	void Update(const float dt) override;
-	void Render(sf::RenderTarget* target) const override;
+	void Render(sf::RenderTarget& target) const override;
 
 
 

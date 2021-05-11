@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Entities\Player.cpp" />
     <ClCompile Include="src\Entities\Entity.cpp" />
     <ClCompile Include="src\States\GameState.cpp" />
     <ClCompile Include="src\Main\Game.cpp" />
@@ -156,13 +157,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\States\State.cpp" />
+    <ClCompile Include="src\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Entities\Player.h" />
     <ClInclude Include="src\Entities\Entity.h" />
     <ClInclude Include="src\States\GameState.h" />
     <ClInclude Include="src\Main\Game.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\States\State.h" />
+    <ClInclude Include="src\Utility\Utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

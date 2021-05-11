@@ -43,7 +43,7 @@ void Game::Render() const
 {
     window->clear(sf::Color(40, 40, 40));
     if (states.empty() == false) {
-        states.top()->Render(window);
+        states.top()->Render(*window);
     }
     window->display();
 }

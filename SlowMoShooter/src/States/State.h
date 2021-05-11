@@ -39,6 +39,6 @@ public:
 	virtual void UpdateKeytime(const float dt);
 	virtual void UpdateInput(const float dt) = 0;
 	virtual void Update(const float dt) = 0;
-	virtual void Render(sf::RenderTarget* target) const = 0;
+	virtual void Render(sf::RenderTarget& target) const = 0;
 };
 
