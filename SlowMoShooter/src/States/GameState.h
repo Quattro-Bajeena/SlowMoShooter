@@ -1,6 +1,7 @@
 #pragma once
 #include "States/State.h"
 #include "Entities/Player.h"
+#include "Weapons/Bullet.h"
 
 class GameState : public State
 {
@@ -10,11 +11,16 @@ private:
 	mutable sf::Sprite renderSprite;
 
 	sf::Texture enemyTexture;
+	sf::Texture backgroundTexture;
+	sf::Sprite background;
 
 	Player* player;
 
+	std::list<Bullet> playerBullets;
+
+
 	void EndState() override;
-	//void UpdateView(const float dt);
+	void UpdateView(const float dt);
 	void UpdateInput(const float dt) override;
 	void UpdatePlayerInput(const float dt);
 	//void UpdateGui(const float dt);

@@ -117,12 +117,7 @@ void Entity::LooseHealth(int damage)
 	if (invincibility == false) {
 		health -= damage;
 	}
-}
-
-void Entity::Move(const sf::Vector2i dir, const float dt)
-{
-	inputDir = dir;
-	velocity += sf::Vector2f(dir) * acceleration * dt;
+	
 }
 
 void Entity::SetPosition(const sf::Vector2f& pos)
@@ -189,7 +184,7 @@ void Entity::UpdateMovement(const float dt)
 			velocity.y = -maxVelocity;
 	}
 
-	std::cout << velocity.x << "|" << velocity.y << " | " << maxVelocity << "\n";
+	//std::cout << velocity.x << "|" << velocity.y << " | " << maxVelocity << "\n";
 
 	//final move
 	sprite.move(velocity * dt); //uses velocity

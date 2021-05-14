@@ -1,5 +1,7 @@
 #pragma once
 #include "Utility/Utility.h"
+#include "Weapons/Bullet.h"
+
 class Entity
 {
 protected:
@@ -8,7 +10,7 @@ protected:
 	int health;
 	int healthMax;
 	bool dead;
-
+	
 	bool invincibility;
 	float invincibilityTimer;
 	float invincibilityTimerMax;
@@ -50,18 +52,19 @@ public:
 	const bool IsDead() const;
 	const bool IsInvincible() const;
 
+	//Gameplay Actions
+	virtual void Shoot(std::list<Bullet>& bullets, sf::Vector2f target) = 0;
+
 	//Mopdifers
 	virtual void Die();
 	virtual void LooseHealthInv(int damage);
 	virtual void LooseHealth(int damage);
-	virtual void Move(const sf::Vector2i dir, const float dt);
 
 
 	virtual void SetPosition(const sf::Vector2f& pos);
 	virtual void StopVelocity(bool x, bool y);
 
 	virtual void UpdateMovement(const float dt);
-	virtual void Update(const float dt) = 0;
 	virtual void Render(sf::RenderTarget& target) const = 0;
 };
 

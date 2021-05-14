@@ -23,6 +23,7 @@
 //#include <list>
 #include <chrono>
 #include <queue>
+#include <list>
 
 //SFML
 #include<SFML/System.hpp>

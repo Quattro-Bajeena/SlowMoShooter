@@ -10,11 +10,17 @@ Player::Player() :
 	dead = false;
 	dashing = false;
 
-	acceleration = 4000;
-	deceleration = 5000;
-	maxVelocity = maxVelocityDefault = 1000;
+	dashTimer = 0;
+	dashTimerMax = 0.15;
 
-	dashVelocity = 1000;
+	dashRechargeTimer = 0;
+	dashRechargeTimeMax = 0.5;
+
+	acceleration = 6000;
+	deceleration = 7000;
+	maxVelocity = maxVelocityDefault = 1500;
+
+	dashVelocity = 7000;
 
 
 	texture.loadFromFile("Assets/schizo.png");
@@ -29,17 +35,17 @@ Player::~Player()
 
 void Player::LooseHealth(int damage)
 {
-	if (this->invincibility == false) {
-		this->health -= damage;
+	if (invincibility == false) {
+		health -= damage;
 	}
 }
 
 void Player::LooseHealthInv(int damage)
 {
-	if (this->invincibility == false) {
-		this->health -= damage;
-		this->invincibility = true;
-		this->invincibilityTimer = 0.f;
+	if (invincibility == false) {
+		health -= damage;
+		invincibility = true;
+		invincibilityTimer = 0.f;
 	}
 }
 
@@ -53,27 +59,55 @@ void Player::Move(const sf::Vector2i dir, const float dt)
 
 void Player::StartDash()
 {
-	dashing = true;
-	maxVelocity = dashVelocity;
-	velocity = util::Normalize(velocity) * dashVelocity;
+	if (dashing == false &&
+		dashRechargeTimer > dashRechargeTimeMax &&
+		util::VectorLength(sf::Vector2f(inputDir)) != 0.f
+		) {
+		dashing = true;
+		maxVelocity = dashVelocity;
+		velocity = util::Normalize(sf::Vector2f(inputDir)) * dashVelocity;
+		dashTimer = 0;
+		invincibility = true;
+		invincibilityTimer = 0;
+	}
+	
 }
 
 void Player::EndDash()
 {
 	dashing = false;
 	maxVelocity = maxVelocityDefault;
+	dashRechargeTimer = 0;
+}
+
+void Player::Shoot(std::list<Bullet>& bullets, sf::Vector2f target)
+{
+	sf::Vector2f start_pos = GetCenterPosition();
+	sf::Vector2f direction = util::Normalize(target - start_pos);
+	sf::Color color = sf::Color(255, 0, 0);
+	int damage = 1;
+	float radius = 10;
+	float speed = 1000;
+	float distance = 5000;
+
+	bullets.emplace_back(start_pos, direction, color, damage, radius, speed, distance);
 }
 
 void Player::Update(const float dt)
 {
-	this->invincibilityTimer += dt;
+	invincibilityTimer += dt;
+	dashTimer += dt;
+	dashRechargeTimer += dt;
 
-	if (this->invincibility == true && this->invincibilityTimer >= this->invincibilityTimerMax) {
-		this->invincibility = false;
-		this->invincibilityTimer = 0.f;
+	if (dashing == true && dashTimer >= dashTimerMax) {
+		EndDash();
 	}
-	if (this->health <= 0) {
-		this->dead = true;
+	if (invincibility == true && invincibilityTimer >= invincibilityTimerMax) {
+		invincibility = false;
+		invincibilityTimer = 0.f;
+	}
+	if (health <= 0) {
+		dead = true;
 	}
 
 	UpdateMovement(dt);

@@ -8,6 +8,11 @@ void GameState::EndState()
 	quit = true;
 }
 
+void GameState::UpdateView(const float dt)
+{
+	view.setCenter(player->GetCenterPosition());
+}
+
 void GameState::UpdateInput(const float dt)
 {
 	
@@ -39,6 +44,14 @@ void GameState::UpdatePlayerInput(const float dt)
 	}
 
 	player->Move(dir, dt);
+
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+		player->StartDash();
+	}
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+		player->Shoot(playerBullets, mousePosView);
+	}
 }
 
 GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
@@ -52,6 +65,12 @@ GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
 
 	player = new Player();
 	player->SetPosition(sf::Vector2f(0, 0));
+
+	enemyTexture.loadFromFile("Assets/UN.png");
+	backgroundTexture.loadFromFile("Assets/background.jpg");
+	background.setTexture(backgroundTexture);
+	background.setPosition(0, 0);
+	background.setScale(5, 5);
 
 }
 
@@ -72,6 +91,15 @@ void GameState::Update(const float dt)
 	UpdatePlayerInput(dt);
 	player->Update(dt);
 
+	for (Bullet& bullet : playerBullets) {
+		bullet.Update(dt);
+	}
+
+	playerBullets.remove_if([](const Bullet& b) {return b.TraveledMaxDistance() == true; });
+
+
+	UpdateView(dt);
+
 	if (player->IsDead())
 		EndState();
 
@@ -83,6 +111,11 @@ void GameState::Render(sf::RenderTarget& target) const
 	renderTexture.clear();
 	renderTexture.setView(view);
 
+	renderTexture.draw(background);
+
+	for (const Bullet& bullet: playerBullets) {
+		bullet.Render(renderTexture);
+	}
 	player->Render(renderTexture);
 
 	renderTexture.display();
