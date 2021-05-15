@@ -16,8 +16,7 @@ protected:
 	//bool canShoot;
 	float distanceThreshold;
 
-	float shootTimer;
-	float shootTimerMax;
+	Timer shootTimer;
 
 	sf::Text text;
 	//Functions
@@ -35,7 +34,7 @@ public:
 	void Move(const sf::Vector2f& target, const float dt);
 	void Shoot(std::list<Bullet>& bullets, sf::Vector2f target) override;
 
-	void Update(const sf::Vector2f& target, const float& dt);
+	void Update(const sf::Vector2f& target, const float dt);
 	void Render(sf::RenderTarget& target) const override;
 };
 

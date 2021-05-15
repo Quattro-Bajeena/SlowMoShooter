@@ -54,6 +54,52 @@ void GameState::UpdatePlayerInput(const float dt)
 	}
 }
 
+void GameState::SpawnEnemies(const float dt)
+{
+	enemyTimer.Update(dt);
+
+	if (enemyTimer.Ready()) {
+		
+		sf::Vector2f pos = sf::Vector2f(RNG::get().randomF(0, 5000), RNG::get().randomF(0, 3000));
+		std::unique_ptr<Enemy> new_enemy = std::make_unique<Enemy>(pos, enemyTexture);
+		enemies.emplace_back(std::move(new_enemy));
+	}
+}
+
+void GameState::UpdateEnemies(const float dt)
+{
+	for (auto&& enemy : enemies) {
+		enemy->Update(player->GetCenterPosition(), dt);
+		enemy->Shoot(enemyBullets, player->GetCenterPosition());
+	}
+
+	for (Bullet& bullet : enemyBullets) {
+		bullet.Update(dt);
+	}
+
+	enemyBullets.remove_if([](const Bullet& b) {return b.ToBeRemoved() == true; });
+	enemies.remove_if([](const auto& enemy) {return enemy->IsDead(); });
+}
+
+void GameState::UpdatePlayer(const float dt)
+{
+	player->Update(dt);
+
+	for (Bullet& bullet : playerBullets) {
+		bullet.Update(dt);
+
+		for (auto&& enemy : enemies) {
+			if (bullet.CheckCollision(enemy->GetGlobalBounds())) {
+				int damage = bullet.GetDamage();
+				enemy->LooseHealth(damage);
+				bullet.RegisterHit();
+			}
+		}
+	}
+
+	playerBullets.remove_if([](const Bullet& b) {return b.ToBeRemoved() == true; });
+}
+
 GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
 	:State(window, states)
 {
@@ -63,15 +109,17 @@ GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
 
 	view = sf::View(sf::Vector2f(0, 0), sf::Vector2f(1920, 1080));
 
-	player = new Player();
+	player = std::make_unique<Player>(sf::Vector2f());
 	player->SetPosition(sf::Vector2f(0, 0));
 
 	enemyTexture.loadFromFile("Assets/UN.png");
+
 	backgroundTexture.loadFromFile("Assets/background.jpg");
 	background.setTexture(backgroundTexture);
 	background.setPosition(0, 0);
 	background.setScale(5, 5);
 
+	enemyTimer = Timer(3);
 }
 
 GameState::~GameState()
@@ -85,18 +133,14 @@ void GameState::Update(const float dt)
 	UpdateMousePosition(&view);
 	UpdateInput(dt);
 	UpdateKeytime(dt);
-
-
-
+	
 	UpdatePlayerInput(dt);
-	player->Update(dt);
 
-	for (Bullet& bullet : playerBullets) {
-		bullet.Update(dt);
-	}
+	SpawnEnemies(dt);
+	UpdateEnemies(dt);
+	UpdatePlayer(dt);
 
-	playerBullets.remove_if([](const Bullet& b) {return b.TraveledMaxDistance() == true; });
-
+	
 
 	UpdateView(dt);
 
@@ -115,6 +159,12 @@ void GameState::Render(sf::RenderTarget& target) const
 
 	for (const Bullet& bullet: playerBullets) {
 		bullet.Render(renderTexture);
+	}
+	for (const Bullet& bullet : enemyBullets) {
+		bullet.Render(renderTexture);
+	}
+	for (auto&& enemy : enemies) {
+		enemy->Render(renderTexture);
 	}
 	player->Render(renderTexture);
 

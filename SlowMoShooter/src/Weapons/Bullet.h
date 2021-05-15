@@ -11,6 +11,7 @@ private:
 	int damage;
 	sf::Vector2f direction;
 	sf::Vector2f currentVelocity;
+	bool hitSomething;
 
 
 public:
@@ -23,9 +24,12 @@ public:
 	bool DistanceLimit(const sf::Vector2f& position) const;
 
 	bool TraveledMaxDistance() const;
+	void RegisterHit();
+
 	//Accesors
 	const sf::FloatRect GetBounds() const;
 	const int GetDamage() const;
+	bool ToBeRemoved() const;
 
 	void Render(sf::RenderTarget& target) const;
 };

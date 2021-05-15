@@ -1,5 +1,4 @@
 #pragma once
-#include "Utility/Utility.h"
 #include "Weapons/Bullet.h"
 
 class Entity
@@ -12,8 +11,7 @@ protected:
 	bool dead;
 	
 	bool invincibility;
-	float invincibilityTimer;
-	float invincibilityTimerMax;
+	Timer invincibilityTimer;
 
 	//Movement
 	float acceleration;
@@ -28,7 +26,7 @@ protected:
 	//sf::FloatRect hitBox;
 
 public:
-	Entity();
+	Entity(sf::Vector2f pos);
 	virtual ~Entity();
 
 	//Setters

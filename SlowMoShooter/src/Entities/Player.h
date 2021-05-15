@@ -10,13 +10,13 @@ private:
 
     bool dashing;
     
-    float dashTimer;
-    float dashTimerMax;
-    float dashRechargeTimer;
-    float dashRechargeTimeMax;
+    Timer dashTimer;
+    Timer dashRechargeTimer;
+
+    Timer shootTimer;
 
 public:
-    Player();
+    Player(sf::Vector2f pos);
     ~Player();
 
 

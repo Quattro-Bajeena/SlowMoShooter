@@ -2,7 +2,7 @@
 #define _USE_MATH_DEFINES
 
 
-//Core
+// Standard library
 #include <algorithm>
 #include <deque>
 #include <iostream>
@@ -20,7 +20,6 @@
 //#include <set>
 //#include <thread>
 #include <utility>
-//#include <list>
 #include <chrono>
 #include <queue>
 #include <list>
@@ -31,3 +30,8 @@
 #include<SFML/Graphics.hpp>
 #include<SFML/Audio.hpp>
 #include<SFML/Network.hpp>
+
+// My
+#include "Utility/Utility.h"
+#include "Utility/RNG.h"
+#include "Utility/Timer.h"

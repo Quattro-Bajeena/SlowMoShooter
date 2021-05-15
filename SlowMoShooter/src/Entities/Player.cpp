@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Player.h"
 
-Player::Player() :
-	Entity()
+Player::Player(sf::Vector2f pos) :
+	Entity(pos)
 {
 	
 	health = 10;
@@ -10,11 +10,8 @@ Player::Player() :
 	dead = false;
 	dashing = false;
 
-	dashTimer = 0;
-	dashTimerMax = 0.15;
-
-	dashRechargeTimer = 0;
-	dashRechargeTimeMax = 0.5;
+	dashTimer = Timer(0.15);
+	dashRechargeTimer = Timer(0.5);
 
 	acceleration = 6000;
 	deceleration = 7000;
@@ -22,6 +19,7 @@ Player::Player() :
 
 	dashVelocity = 7000;
 
+	shootTimer = Timer(1);
 
 	texture.loadFromFile("Assets/schizo.png");
 	sprite.setTexture(texture);
@@ -60,15 +58,15 @@ void Player::Move(const sf::Vector2i dir, const float dt)
 void Player::StartDash()
 {
 	if (dashing == false &&
-		dashRechargeTimer > dashRechargeTimeMax &&
+		dashRechargeTimer.Ready() &&
 		util::VectorLength(sf::Vector2f(inputDir)) != 0.f
 		) {
+
 		dashing = true;
 		maxVelocity = dashVelocity;
 		velocity = util::Normalize(sf::Vector2f(inputDir)) * dashVelocity;
-		dashTimer = 0;
 		invincibility = true;
-		invincibilityTimer = 0;
+		dashTimer.Reset();
 	}
 	
 }
@@ -77,34 +75,37 @@ void Player::EndDash()
 {
 	dashing = false;
 	maxVelocity = maxVelocityDefault;
-	dashRechargeTimer = 0;
+	dashRechargeTimer.Reset();
 }
 
 void Player::Shoot(std::list<Bullet>& bullets, sf::Vector2f target)
 {
-	sf::Vector2f start_pos = GetCenterPosition();
-	sf::Vector2f direction = util::Normalize(target - start_pos);
-	sf::Color color = sf::Color(255, 0, 0);
-	int damage = 1;
-	float radius = 10;
-	float speed = 1000;
-	float distance = 5000;
+	if (shootTimer.Ready()) {
+		sf::Vector2f start_pos = GetCenterPosition();
+		sf::Vector2f direction = util::Normalize(target - start_pos);
+		sf::Color color = sf::Color(0, 255, 0);
+		int damage = 1;
+		float radius = 20;
+		float speed = 5000;
+		float distance = 5000;
 
-	bullets.emplace_back(start_pos, direction, color, damage, radius, speed, distance);
+		bullets.emplace_back(start_pos, direction, color, damage, radius, speed, distance);
+	}
+	
 }
 
 void Player::Update(const float dt)
 {
-	invincibilityTimer += dt;
-	dashTimer += dt;
-	dashRechargeTimer += dt;
+	invincibilityTimer.Update(dt);
+	dashTimer.Update(dt);
+	dashRechargeTimer.Update(dt);
+	shootTimer.Update(dt);
 
-	if (dashing == true && dashTimer >= dashTimerMax) {
+	if (dashing == true && dashTimer.Ready()) {
 		EndDash();
 	}
-	if (invincibility == true && invincibilityTimer >= invincibilityTimerMax) {
+	if (invincibility == true && invincibilityTimer.Ready()) {
 		invincibility = false;
-		invincibilityTimer = 0.f;
 	}
 	if (health <= 0) {
 		dead = true;

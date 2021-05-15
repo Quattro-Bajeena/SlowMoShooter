@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "Entity.h"
 
-Entity::Entity()
+Entity::Entity(sf::Vector2f pos)
 {
+	sprite.setPosition(pos);
+
 	invincibility = false;
-	invincibilityTimer = 0;
-	invincibilityTimerMax = 0.5;
+	invincibilityTimer = Timer(0.5);
 
 	dead = false;
 	velocity = sf::Vector2f();
@@ -108,7 +109,7 @@ void Entity::LooseHealthInv(int damage)
 	if (invincibility == false) {
 		health -= damage;
 		invincibility = true;
-		invincibilityTimer = 0.f;
+		invincibilityTimer.Reset();
 	}
 }
 

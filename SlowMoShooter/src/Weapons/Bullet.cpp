@@ -3,7 +3,8 @@
 
 Bullet::Bullet(sf::Vector2f startPos, sf::Vector2f dir,sf::Color color,
 	int damage, float radius, float max_speed, float max_distance)
-	:direction(dir), maxSpeed(max_speed), maxDistance(max_distance), damage(damage), distanceTraveled(0)
+	:direction(dir), maxSpeed(max_speed), maxDistance(max_distance), damage(damage), distanceTraveled(0),
+	hitSomething(false)
 {
 	shape.setPosition(startPos);
 	shape.setRadius(radius);
@@ -35,6 +36,11 @@ bool Bullet::TraveledMaxDistance() const
 	return distanceTraveled > maxDistance;
 }
 
+void Bullet::RegisterHit()
+{
+	hitSomething = true;
+}
+
 const sf::FloatRect Bullet::GetBounds() const
 {
 	return shape.getGlobalBounds();
@@ -43,6 +49,11 @@ const sf::FloatRect Bullet::GetBounds() const
 const int Bullet::GetDamage() const
 {
 	return damage;
+}
+
+bool Bullet::ToBeRemoved() const
+{
+	return hitSomething || TraveledMaxDistance();
 }
 
 void Bullet::Render(sf::RenderTarget& target) const
