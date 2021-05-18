@@ -15,6 +15,8 @@ private:
 	sf::Texture backgroundTexture;
 	sf::Sprite background;
 
+	sf::Text playerHealth;
+
 	std::unique_ptr<Player> player;
 	std::list<Bullet> playerBullets;
 
@@ -22,6 +24,21 @@ private:
 	std::list<Bullet> enemyBullets;
 
 	Timer enemyTimer;
+	sf::Font font;
+
+	sf::RectangleShape timeSlowBar;
+	sf::RectangleShape timeSlowBarOutline;
+	sf::RectangleShape timeSlowBarBackground;
+
+	// Time slow mechanic
+	bool usingTimeSlow; //indcates if button for using slow is pressed
+	bool timeSlow; // if slow is actually active
+	float gaugeDepletionSpeed; // how fast gauge is used up comapred to recovery
+	float timeSlowLimit; // max gauge value - no. of seconds to recover
+	float timeSlowGauge; //current level of timeSlow left
+	float timeSlowThreshold; // minum level of gauge you have to be able to activate time slow
+	float currentTimeMultiplier;
+	float slowTimeMultiplier;
 
 	void EndState() override;
 	void UpdateView(const float dt);
@@ -31,13 +48,14 @@ private:
 	void SpawnEnemies(const float dt);
 	void UpdateEnemies(const float dt);
 	void UpdatePlayer(const float dt);
-	//void UpdateGui(const float dt);
+	void UpdatePlayerBullets(const float dt);
+	void UpdateGui(const float dt);
 	//void UpdatePauseMenuButtons(const float dt);
 
 	//virtual void UpdatePlayerInput(const float dt);
 	//void UpdateTileMap(const float dt);
 
-	//void RenderGui(sf::RenderTarget* target = nullptr) const;
+	void RenderGui(sf::RenderTarget& target) const;
 
 public:
 	GameState(sf::RenderWindow& window, std::stack<State*>& states);

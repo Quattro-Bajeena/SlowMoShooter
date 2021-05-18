@@ -15,6 +15,14 @@ private:
 
     Timer shootTimer;
 
+    //GUN
+    sf::Texture gunTexture;
+    sf::Sprite gunSprt;
+    sf::FloatRect gunDefaultBounds;
+    sf::Vector2f gunTip;
+    sf::Vector2f gunDirection;
+    float gunDistance;
+
 public:
     Player(sf::Vector2f pos);
     ~Player();
@@ -28,8 +36,9 @@ public:
     void EndDash();
 
     void Shoot(std::list<Bullet>& bullets, sf::Vector2f target) override;
+    void UpdateGunPos(sf::Vector2f mouse_pos);
 
-    void Update(const float dt);
+    void Update(sf::Vector2f mouse_pos, const float dt);
     void Render(sf::RenderTarget& target) const override;
 
 };

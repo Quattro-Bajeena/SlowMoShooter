@@ -22,6 +22,8 @@ protected:
 	sf::Vector2f velocity;
 	sf::Vector2i inputDir;
 
+
+
 	//sf::Vector2f position;
 	//sf::FloatRect hitBox;
 
