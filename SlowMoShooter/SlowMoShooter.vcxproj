@@ -149,6 +149,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\UI\Arrow.cpp" />
+    <ClCompile Include="src\Enviroment\Objective.cpp" />
+    <ClCompile Include="src\Enviroment\Map.cpp" />
     <ClCompile Include="src\Entities\Enemy.cpp" />
     <ClCompile Include="src\Utility\RNG.cpp" />
     <ClCompile Include="src\Weapons\Bullet.cpp" />
@@ -166,6 +169,9 @@
     <ClCompile Include="src\Utility\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\UI\Arrow.h" />
+    <ClInclude Include="src\Enviroment\Objective.h" />
+    <ClInclude Include="src\Enviroment\Map.h" />
     <ClInclude Include="src\Entities\Enemy.h" />
     <ClInclude Include="src\Utility\RNG.h" />
     <ClInclude Include="src\Weapons\Bullet.h" />

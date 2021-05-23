@@ -62,6 +62,7 @@ public:
 
 
 	virtual void SetPosition(const sf::Vector2f& pos);
+	virtual void SetPosition(const float x, const float y);
 	virtual void StopVelocity(bool x, bool y);
 
 	virtual void UpdateMovement(const float dt);

@@ -126,6 +126,11 @@ void Entity::SetPosition(const sf::Vector2f& pos)
 	sprite.setPosition(pos);
 }
 
+void Entity::SetPosition(const float x, const float y)
+{
+	SetPosition(sf::Vector2f(x, y));
+}
+
 void Entity::StopVelocity(bool x, bool y)
 {
 	if (x)

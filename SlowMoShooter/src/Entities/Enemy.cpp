@@ -13,7 +13,7 @@ Enemy::Enemy(sf::Vector2f position, sf::Texture& texture)
 	deceleration = RNG::get().randomF(500, 1000);
 	maxVelocity = RNG::get().randomF(400, 700);
 
-	distanceThreshold = RNG::get().randomF(800, 1200);
+	distanceThreshold = RNG::get().randomF(1200, 1800);
 	points = 1;
 	damage = 1;
 	

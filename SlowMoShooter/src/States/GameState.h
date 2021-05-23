@@ -3,6 +3,9 @@
 #include "Entities/Player.h"
 #include "Entities/Enemy.h"
 #include "Weapons/Bullet.h"
+#include "Enviroment/Map.h"
+#include "Enviroment/Objective.h"
+#include "UI/Arrow.h"
 
 class GameState : public State
 {
@@ -14,6 +17,15 @@ private:
 	sf::Texture enemyTexture;
 	sf::Texture backgroundTexture;
 	sf::Sprite background;
+
+	std::unique_ptr<Map> map;
+	
+	
+	std::vector<Objective> objectives;
+	std::vector<Arrow> objectiveArrows;
+	sf::Texture arrowTexture;
+	sf::Texture objectiveDeactivatedTexture;
+	sf::Texture objectiveActivatedTexture;
 
 	sf::Text playerHealth;
 
@@ -40,6 +52,7 @@ private:
 	float currentTimeMultiplier;
 	float slowTimeMultiplier;
 
+	void WinGame();
 	void EndState() override;
 	void UpdateView(const float dt);
 	void UpdateInput(const float dt) override;
@@ -49,6 +62,7 @@ private:
 	void UpdateEnemies(const float dt);
 	void UpdatePlayer(const float dt);
 	void UpdatePlayerBullets(const float dt);
+	void UpdateMap(const float dt);
 	void UpdateGui(const float dt);
 	//void UpdatePauseMenuButtons(const float dt);
 

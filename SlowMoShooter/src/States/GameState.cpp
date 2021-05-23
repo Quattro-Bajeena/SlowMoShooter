@@ -2,6 +2,11 @@
 #include "GameState.h"
 
 
+void GameState::WinGame()
+{
+	EndState();
+}
+
 void GameState::EndState()
 {
 	//states.push(new EndScreenState(stateData, statistics, audio));
@@ -43,6 +48,21 @@ void GameState::UpdatePlayerInput(const float dt)
 		dir += sf::Vector2i(0, 1), dt;
 	}
 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+		for (int i = 0; i < objectives.size(); i++) {
+			bool activated = objectives[i].Activate(player->GetCenterPosition());
+			/*if (activated) {
+				objectives.erase(objectives.begin() + i);
+				objectiveArrows.erase(objectiveArrows.begin() + i);
+
+				if (i != objectives.size() - 1) {
+					i--;
+				}
+			}*/
+		}
+	}
+
+
 	player->Move(dir, dt);
 
 
@@ -64,14 +84,18 @@ void GameState::UpdatePlayerInput(const float dt)
 
 void GameState::SpawnEnemies(const float dt)
 {
-	enemyTimer.Update(dt);
+	/*enemyTimer.Update(dt);
 
 	if (enemyTimer.Ready()) {
-		
-		sf::Vector2f pos = sf::Vector2f(RNG::get().randomF(0, 5000), RNG::get().randomF(0, 3000));
+		sf::Vector2f playerPos = player->GetCenterPosition();
+		float range = 3000;
+		sf::Vector2f pos = sf::Vector2f(
+			RNG::get().randomF(playerPos.x- range, playerPos.x + range), 
+			RNG::get().randomF(playerPos.y - range, playerPos.y + range)
+		);
 		std::unique_ptr<Enemy> new_enemy = std::make_unique<Enemy>(pos, enemyTexture);
 		enemies.emplace_back(std::move(new_enemy));
-	}
+	}*/
 }
 
 void GameState::UpdateEnemies(const float dt)
@@ -117,8 +141,44 @@ void GameState::UpdatePlayerBullets(const float dt)
 	playerBullets.remove_if([](const Bullet& b) {return b.ToBeRemoved() == true; });
 }
 
+void GameState::UpdateMap(const float dt)
+{
+	if (map->InBounds(player->GetCenterPosition()) == false) {
+		player->LooseHealth(player->GetMaxHealth());
+	}
+	map->UpdateCollision(player.get(), dt);
+	for (auto& bullet : playerBullets) {
+		if (map->Collision(bullet.GetBounds())) {
+			bullet.RegisterHit();
+		}
+	}
+
+
+
+	for (const std::unique_ptr<Enemy>& enemy : enemies) {
+		map->UpdateCollision(enemy.get(), dt);
+
+		if (map->InBounds(enemy->GetCenterPosition()) == false) {
+			enemy->LooseHealth(enemy->GetMaxHealth());
+		}
+	}
+
+
+	for (auto& bullet : enemyBullets) {
+		if (map->Collision(bullet.GetBounds())) {
+			bullet.RegisterHit();
+		}
+	}
+
+
+	
+}
+
 void GameState::UpdateGui(const float dt)
 {
+	for (int i = 0; i < objectives.size(); i++) {
+		objectiveArrows[i].Update(player->GetCenterPosition(), objectives[i].GetPosition());
+	}
 	playerHealth.setString(std::to_string(player->GetHealth()));
 	timeSlowBar.setScale(timeSlowGauge / timeSlowLimit, 1);
 }
@@ -128,27 +188,42 @@ void GameState::UpdateGui(const float dt)
 GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
 	:State(window, states)
 {
+	//Rendering
 	renderTexture.create(1920, 1080);
 	renderSprite.setTexture(renderTexture.getTexture());
 	renderSprite.setTextureRect(sf::IntRect(0, 0, 1920, 1080));
 
 	view = sf::View(sf::Vector2f(0, 0), sf::Vector2f(1920, 1080));
 	view.zoom(2);
-
+	//Player and Enemies
 	player = std::make_unique<Player>(sf::Vector2f());
 	player->SetPosition(sf::Vector2f(0, 0));
 
 	enemyTexture.loadFromFile("Assets/UN.png");
-
-	backgroundTexture.loadFromFile("Assets/background.jpg");
-	background.setTexture(backgroundTexture);
-	background.setPosition(0, 0);
-	background.setScale(5, 5);
-
 	enemyTimer = Timer(1);
 
-	
 
+	//Map and objectives
+	map = std::make_unique<Map>(50, 50, 256);
+	objectiveActivatedTexture.loadFromFile("Assets/teslaCoilActive.png");
+	objectiveDeactivatedTexture.loadFromFile("Assets/teslaCoilNotActive.png");
+	arrowTexture.loadFromFile("Assets/arrow.png");
+
+	int numberObjectives = 3;
+	float spawnMargin = 1000;
+	float threshold = 1000;
+	float arrowRadius = 500;
+	for (int i = 0; i < numberObjectives; i++) {
+
+		float x = RNG::get().randomF(spawnMargin, map->GetBounds().width - spawnMargin);
+		float y = RNG::get().randomF(spawnMargin, map->GetBounds().height - spawnMargin);
+		Objective objective = Objective(x, y, threshold, objectiveDeactivatedTexture, objectiveActivatedTexture);
+		objectives.emplace_back(objective);
+
+		objectiveArrows.emplace_back(player->GetCenterPosition(), arrowRadius, arrowTexture);
+	}
+
+	// Slow Time mechanic
 	usingTimeSlow = false;
 	timeSlow = false;
 	timeSlowLimit = 8;
@@ -159,6 +234,7 @@ GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
 	currentTimeMultiplier = 1;
 	gaugeDepletionSpeed = 2;
 
+	// UI
 	font.loadFromFile("Assets/font.ttf");
 
 	playerHealth.setFont(font);
@@ -226,7 +302,7 @@ void GameState::Update(const float dt)
 	UpdateEnemies(dt * currentTimeMultiplier);
 	UpdatePlayer(dt);
 	UpdatePlayerBullets(dt * currentTimeMultiplier);
-
+	UpdateMap(dt);
 	
 
 	UpdateView(dt);
@@ -235,11 +311,26 @@ void GameState::Update(const float dt)
 	if (player->IsDead())
 		EndState();
 
+	bool allObjectivesSet = true;
+	for (Objective& objective : objectives) {
+		if (objective.IsActivated() == false) {
+			allObjectivesSet = false;
+			break;
+		}
+	}
+	if (allObjectivesSet) {
+		WinGame();
+	}
+
 	ResetScrollWheel();
 }
 
 void GameState::RenderGui(sf::RenderTarget& target) const
 {
+	for (const Arrow& arrow : objectiveArrows) {
+		arrow.Render(target);
+	}
+
 	target.setView(target.getDefaultView());
 	target.draw(playerHealth);
 	target.draw(timeSlowBarBackground);
@@ -254,6 +345,9 @@ void GameState::Render(sf::RenderTarget& target) const
 	renderTexture.setView(view);
 
 	renderTexture.draw(background);
+	map->Render(renderTexture);
+
+	
 
 	for (const Bullet& bullet: playerBullets) {
 		bullet.Render(renderTexture);
@@ -265,6 +359,10 @@ void GameState::Render(sf::RenderTarget& target) const
 		enemy->Render(renderTexture);
 	}
 	player->Render(renderTexture);
+
+	for (const Objective& objective : objectives) {
+		objective.Render(renderTexture);
+	}
 
 	RenderGui(renderTexture);
 
