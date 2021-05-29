@@ -16,6 +16,7 @@ private:
 public:
 	Map(int width, int height, int tile_size);
 
+	sf::Vector2f GetRandomPosition();
 	sf::FloatRect GetBounds() const;
 	bool InBounds(sf::Vector2f position);
 	bool Collision(sf::FloatRect rect);

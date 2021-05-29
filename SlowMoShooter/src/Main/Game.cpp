@@ -51,13 +51,13 @@ void Game::Render() const
 // Initalization
 Game::Game()
 {
-	window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "Slow-Mo Shooter", sf::Style::Titlebar | sf::Style::Close);
+	window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "I hate antichrist", sf::Style::Titlebar | sf::Style::Close);
 	window->setVerticalSyncEnabled(true);
 	
 	srand(time(NULL));
 	dt = 0;
 
-    states.push(new GameState(*window, states));
+    states.push(new MenuState(*window, states));
 }
 
 Game::~Game()

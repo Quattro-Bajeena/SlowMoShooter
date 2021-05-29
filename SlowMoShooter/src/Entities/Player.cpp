@@ -5,8 +5,8 @@ Player::Player(sf::Vector2f pos) :
 	Entity(pos)
 {
 	
-	health = 10;
-	healthMax = 10;
+	health = 1;
+	healthMax = 1;
 	dead = false;
 	dashing = false;
 

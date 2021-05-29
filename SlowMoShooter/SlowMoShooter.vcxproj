@@ -149,6 +149,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\States\EndScreenState.cpp" />
+    <ClCompile Include="src\States\MenuState.cpp" />
     <ClCompile Include="src\UI\Arrow.cpp" />
     <ClCompile Include="src\Enviroment\Objective.cpp" />
     <ClCompile Include="src\Enviroment\Map.cpp" />
@@ -169,6 +171,8 @@
     <ClCompile Include="src\Utility\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\States\EndScreenState.h" />
+    <ClInclude Include="src\States\MenuState.h" />
     <ClInclude Include="src\UI\Arrow.h" />
     <ClInclude Include="src\Enviroment\Objective.h" />
     <ClInclude Include="src\Enviroment\Map.h" />

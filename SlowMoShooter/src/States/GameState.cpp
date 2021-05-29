@@ -4,14 +4,16 @@
 
 void GameState::WinGame()
 {
+	states.push(new EndScreenState(true, window, states));
 	EndState();
 }
 
-void GameState::EndState()
+void GameState::LoseGame()
 {
-	//states.push(new EndScreenState(stateData, statistics, audio));
-	quit = true;
+	states.push(new EndScreenState(false, window, states));
+	EndState();
 }
+
 
 void GameState::UpdateView(const float dt)
 {
@@ -51,14 +53,9 @@ void GameState::UpdatePlayerInput(const float dt)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
 		for (int i = 0; i < objectives.size(); i++) {
 			bool activated = objectives[i].Activate(player->GetCenterPosition());
-			/*if (activated) {
-				objectives.erase(objectives.begin() + i);
-				objectiveArrows.erase(objectiveArrows.begin() + i);
-
-				if (i != objectives.size() - 1) {
-					i--;
-				}
-			}*/
+			if (activated) {
+				objectiveArrows[i].Deactivate();
+			}
 		}
 	}
 
@@ -84,7 +81,7 @@ void GameState::UpdatePlayerInput(const float dt)
 
 void GameState::SpawnEnemies(const float dt)
 {
-	/*enemyTimer.Update(dt);
+	enemyTimer.Update(dt);
 
 	if (enemyTimer.Ready()) {
 		sf::Vector2f playerPos = player->GetCenterPosition();
@@ -95,7 +92,7 @@ void GameState::SpawnEnemies(const float dt)
 		);
 		std::unique_ptr<Enemy> new_enemy = std::make_unique<Enemy>(pos, enemyTexture);
 		enemies.emplace_back(std::move(new_enemy));
-	}*/
+	}
 }
 
 void GameState::UpdateEnemies(const float dt)
@@ -195,9 +192,10 @@ GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
 
 	view = sf::View(sf::Vector2f(0, 0), sf::Vector2f(1920, 1080));
 	view.zoom(2);
+	
 	//Player and Enemies
 	player = std::make_unique<Player>(sf::Vector2f());
-	player->SetPosition(sf::Vector2f(0, 0));
+	
 
 	enemyTexture.loadFromFile("Assets/UN.png");
 	enemyTimer = Timer(1);
@@ -208,6 +206,9 @@ GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
 	objectiveActivatedTexture.loadFromFile("Assets/teslaCoilActive.png");
 	objectiveDeactivatedTexture.loadFromFile("Assets/teslaCoilNotActive.png");
 	arrowTexture.loadFromFile("Assets/arrow.png");
+	player->SetPosition(map->GetRandomPosition());
+
+
 
 	int numberObjectives = 3;
 	float spawnMargin = 1000;
@@ -223,6 +224,8 @@ GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
 		objectiveArrows.emplace_back(player->GetCenterPosition(), arrowRadius, arrowTexture);
 	}
 
+	
+
 	// Slow Time mechanic
 	usingTimeSlow = false;
 	timeSlow = false;
@@ -235,10 +238,10 @@ GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
 	gaugeDepletionSpeed = 2;
 
 	// UI
-	font.loadFromFile("Assets/font.ttf");
+	font.loadFromFile("Assets/Helvetica.ttf");
 
 	playerHealth.setFont(font);
-	playerHealth.setPosition(10, 10);
+	playerHealth.setPosition(10, 60);
 	playerHealth.setScale(5, 5);
 	playerHealth.setString(std::to_string(player->GetHealth()));
 	playerHealth.setFillColor(sf::Color::Red);
@@ -309,7 +312,7 @@ void GameState::Update(const float dt)
 	UpdateGui(dt);
 
 	if (player->IsDead())
-		EndState();
+		LoseGame();
 
 	bool allObjectivesSet = true;
 	for (Objective& objective : objectives) {

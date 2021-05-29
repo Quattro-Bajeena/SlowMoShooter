@@ -1,4 +1,5 @@
 #pragma once
+#include "Utility/Timer.h"
 class State
 {
 protected:
@@ -7,20 +8,17 @@ protected:
 
 	bool quit;
 
-	float keytime;
-	float keytimeMax;
-
-	float clickTime;
-	float clickTimeMax;
-
-	int gridSize;
+	/*float keytime;
+	float keytimeMax;*/
+	Timer keyTimer;
 
 	sf::Vector2i mousePosScreen;
 	sf::Vector2i mousePosWindow;
 	sf::Vector2f mousePosView;
-	sf::Vector2i mousePosGrid;
 	int scroll;
 	bool scrollActive;
+
+	sf::Music music;
 
 public:
 	State(sf::RenderWindow& window, std::stack<State*>& states);
@@ -29,7 +27,6 @@ public:
 	//Accesors
 	const bool GetQuit() const;
 	const bool GetKeytime();
-	const bool GetClickTime();
 
 	//Functions
 	virtual void EndState();

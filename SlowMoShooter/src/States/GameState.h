@@ -1,11 +1,12 @@
 #pragma once
-#include "States/State.h"
+#include "States/EndScreenState.h"
 #include "Entities/Player.h"
 #include "Entities/Enemy.h"
 #include "Weapons/Bullet.h"
 #include "Enviroment/Map.h"
 #include "Enviroment/Objective.h"
 #include "UI/Arrow.h"
+
 
 class GameState : public State
 {
@@ -53,7 +54,7 @@ private:
 	float slowTimeMultiplier;
 
 	void WinGame();
-	void EndState() override;
+	void LoseGame();
 	void UpdateView(const float dt);
 	void UpdateInput(const float dt) override;
 	void UpdatePlayerInput(const float dt);

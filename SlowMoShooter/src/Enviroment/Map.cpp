@@ -45,6 +45,15 @@ Map::Map(int width, int height, int tile_size)
 
 
 
+sf::Vector2f Map::GetRandomPosition()
+{
+	int margin = 100;
+	return sf::Vector2f(
+		RNG::get().randomF(margin, bounds.height- margin),
+		RNG::get().randomF(margin, bounds.width - margin)
+	);
+}
+
 sf::FloatRect Map::GetBounds() const
 {
 	return bounds;

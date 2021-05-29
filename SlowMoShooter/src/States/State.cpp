@@ -3,11 +3,11 @@
 
 State::State(sf::RenderWindow& window, std::stack<State*>& states)
     :window(window), states(states),
-    quit(false), keytime(0), keytimeMax(0.3), clickTime(0), clickTimeMax(0.1),
+    quit(false), 
     scroll(0), scrollActive(false)
 {
     window.setMouseCursorVisible(true); 
-    gridSize = 192;
+    keyTimer = Timer(0.3);
 }
 
 State::~State()
@@ -21,24 +21,12 @@ const bool State::GetQuit() const
 
 const bool State::GetKeytime()
 {
-    if (clickTime >= clickTimeMax) {
-        clickTime = 0;
-        return true;
-    }
-    else return false;
-}
-
-const bool State::GetClickTime()
-{
-    if (keytime >= keytimeMax) {
-        keytime = 0;
-        return true;
-    }
-    else return false;
+    return keyTimer.Ready();
 }
 
 void State::EndState()
 {
+    music.stop();
     quit = true;
 }
 
@@ -52,10 +40,6 @@ void State::UpdateMousePosition(sf::View* view)
 
     mousePosView = window.mapPixelToCoords(mousePosWindow);
 
-    mousePosGrid = sf::Vector2i(
-        (int)mousePosView.x / gridSize,
-        (int)mousePosView.y / gridSize
-    );
 
     window.setView(window.getDefaultView());
 }
@@ -74,10 +58,5 @@ void State::ResetScrollWheel()
 
 void State::UpdateKeytime(const float dt)
 {
-    if (keytime < keytimeMax) {
-        keytime += dt;
-    }
-    if (clickTime < clickTimeMax) {
-        clickTime += dt;
-    }
+    keyTimer.Update(dt);
 }
