@@ -36,6 +36,7 @@ private:
 	std::list<std::unique_ptr<Enemy>> enemies;
 	std::list<Bullet> enemyBullets;
 
+	int maxNoEnemies;
 	Timer enemyTimer;
 	sf::Font font;
 
@@ -73,7 +74,7 @@ private:
 	void RenderGui(sf::RenderTarget& target) const;
 
 public:
-	GameState(sf::RenderWindow& window, std::stack<State*>& states);
+	GameState(sf::RenderWindow& window, std::stack<State*>& states, std::map<std::string, std::string>& config);
 	~GameState();
 
 	void Update(const float dt) override;

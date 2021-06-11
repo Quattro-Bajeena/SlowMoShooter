@@ -4,13 +4,13 @@
 
 void GameState::WinGame()
 {
-	states.push(new EndScreenState(true, window, states));
+	states.push(new EndScreenState(true, window, states, config));
 	EndState();
 }
 
 void GameState::LoseGame()
 {
-	states.push(new EndScreenState(false, window, states));
+	states.push(new EndScreenState(false, window, states, config));
 	EndState();
 }
 
@@ -83,9 +83,9 @@ void GameState::SpawnEnemies(const float dt)
 {
 	enemyTimer.Update(dt);
 
-	if (enemyTimer.Ready()) {
+	if (enemies.size() < maxNoEnemies && enemyTimer.Ready()) {
 		sf::Vector2f playerPos = player->GetCenterPosition();
-		float range = 3000;
+		float range = 4000;
 		sf::Vector2f pos = sf::Vector2f(
 			RNG::get().randomF(playerPos.x- range, playerPos.x + range), 
 			RNG::get().randomF(playerPos.y - range, playerPos.y + range)
@@ -100,6 +100,9 @@ void GameState::UpdateEnemies(const float dt)
 	for (auto&& enemy : enemies) {
 		enemy->Update(player->GetCenterPosition(), dt);
 		enemy->Shoot(enemyBullets, player->GetCenterPosition());
+		if (enemy->GetGlobalBounds().intersects(player->GetGlobalBounds())) {
+			player->LooseHealthInv(player->GetHealth() / 2);
+		}
 	}
 
 	for (Bullet& bullet : enemyBullets) {
@@ -182,8 +185,8 @@ void GameState::UpdateGui(const float dt)
 
 
 
-GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
-	:State(window, states)
+GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states, std::map<std::string, std::string>& config)
+	:State(window, states, config)
 {
 	//Rendering
 	renderTexture.create(1920, 1080);
@@ -194,15 +197,18 @@ GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
 	view.zoom(2);
 	
 	//Player and Enemies
-	player = std::make_unique<Player>(sf::Vector2f());
+	int player_health = std::stoi(config.at("player_health"));
+	player = std::make_unique<Player>(sf::Vector2f(), player_health);
 	
 
 	enemyTexture.loadFromFile("Assets/UN.png");
-	enemyTimer = Timer(1);
-
-
+	enemyTimer = Timer( std::stof(config.at("enemy_spawn_time")));
+	maxNoEnemies = std::stoi(config.at("max_enemies"));
+	
 	//Map and objectives
-	map = std::make_unique<Map>(50, 50, 256);
+	int map_width = std::stoi(config.at("map_width"));
+	int map_height = std::stoi(config.at("map_height"));
+	map = std::make_unique<Map>(map_width, map_height, 256);
 	objectiveActivatedTexture.loadFromFile("Assets/teslaCoilActive.png");
 	objectiveDeactivatedTexture.loadFromFile("Assets/teslaCoilNotActive.png");
 	arrowTexture.loadFromFile("Assets/arrow.png");
@@ -210,7 +216,7 @@ GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
 
 
 
-	int numberObjectives = 3;
+	int numberObjectives = std::stoi(config.at("objectives"));
 	float spawnMargin = 1000;
 	float threshold = 1000;
 	float arrowRadius = 500;
@@ -229,20 +235,20 @@ GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
 	// Slow Time mechanic
 	usingTimeSlow = false;
 	timeSlow = false;
-	timeSlowLimit = 8;
+	timeSlowLimit = 6;
 	timeSlowGauge = timeSlowLimit;
 	timeSlowThreshold = timeSlowLimit * 0.75;
 
 	slowTimeMultiplier = 0.1;
 	currentTimeMultiplier = 1;
-	gaugeDepletionSpeed = 2;
+	gaugeDepletionSpeed = 1.5;
 
 	// UI
-	font.loadFromFile("Assets/Helvetica.ttf");
+	font.loadFromFile("Assets/Helvetica-Bold.ttf");
 
 	playerHealth.setFont(font);
 	playerHealth.setPosition(10, 60);
-	playerHealth.setScale(5, 5);
+	playerHealth.setCharacterSize(128);
 	playerHealth.setString(std::to_string(player->GetHealth()));
 	playerHealth.setFillColor(sf::Color::Red);
 
@@ -250,17 +256,17 @@ GameState::GameState(sf::RenderWindow& window, std::stack<State*>& states)
 	sf::Vector2f size = sf::Vector2f(200, 50);
 	timeSlowBar.setPosition(pos);
 	timeSlowBar.setSize(size);
-	timeSlowBar.setFillColor(sf::Color::Blue);
+	timeSlowBar.setFillColor(sf::Color::Yellow);
 
 	timeSlowBarOutline.setPosition(pos);
 	timeSlowBarOutline.setSize(size);
 	timeSlowBarOutline.setFillColor(sf::Color::Transparent);
-	timeSlowBarOutline.setOutlineColor(sf::Color::Black);
+	timeSlowBarOutline.setOutlineColor(sf::Color::Red);
 	timeSlowBarOutline.setOutlineThickness(2);
 
 	timeSlowBarBackground.setPosition(pos);
 	timeSlowBarBackground.setSize(size);
-	timeSlowBarBackground.setFillColor(sf::Color::White);
+	timeSlowBarBackground.setFillColor(sf::Color::Black);
 }
 
 GameState::~GameState()

@@ -9,9 +9,9 @@ Enemy::Enemy(sf::Vector2f position, sf::Texture& texture)
 	healthMax = 1;
 	dead = false;
 
-	acceleration = RNG::get().randomF(2500, 3500);
+	acceleration = RNG::get().randomF(3500, 4500);
 	deceleration = RNG::get().randomF(500, 1000);
-	maxVelocity = RNG::get().randomF(400, 700);
+	maxVelocity = RNG::get().randomF(700, 1300);
 
 	distanceThreshold = RNG::get().randomF(1200, 1800);
 	points = 1;
@@ -56,8 +56,8 @@ void Enemy::Shoot(std::list<Bullet>& bullets, sf::Vector2f target)
 		sf::Color color = sf::Color(255, 0, 0);
 		int damage = 1;
 		float radius = 30;
-		float speed = 1000;
-		float distance = 5000;
+		float speed = 1200;
+		float distance = 10000;
 
 		bullets.emplace_back(start_pos, direction, color, damage, radius, speed, distance);
 	}

@@ -39,6 +39,26 @@ void Game::Update()
     }
 }
 
+void Game::LoadConfig()
+{
+    std::ifstream file("config.txt");
+
+    std::string key, value;
+    if (file.is_open() == true) {
+        while (file >> key >> value) {
+            key.pop_back();
+
+            //std::cout << key << " " << value << "\n";
+            config[key] = value;
+        }
+    }
+    else {
+        std::cout << "Couldn't open config.txt\n";
+        exit(1);
+    }
+
+}
+
 void Game::Render() const
 {
     window->clear(sf::Color(40, 40, 40));
@@ -54,10 +74,14 @@ Game::Game()
 	window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "I hate antichrist", sf::Style::Titlebar | sf::Style::Close);
 	window->setVerticalSyncEnabled(true);
 	
+    icon.loadFromFile("Assets/trollege.jpg");
+    window->setIcon(256, 256, icon.getPixelsPtr());
+
 	srand(time(NULL));
 	dt = 0;
 
-    states.push(new MenuState(*window, states));
+    LoadConfig();
+    states.push(new MenuState(*window, states, config));
 }
 
 Game::~Game()

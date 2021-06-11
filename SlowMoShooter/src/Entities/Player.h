@@ -24,7 +24,7 @@ private:
     float gunDistance;
 
 public:
-    Player(sf::Vector2f pos);
+    Player(sf::Vector2f pos, int max_health);
     ~Player();
 
 

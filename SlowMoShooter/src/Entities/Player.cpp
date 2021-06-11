@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include "Player.h"
 
-Player::Player(sf::Vector2f pos) :
+Player::Player(sf::Vector2f pos, int max_health) :
 	Entity(pos)
 {
 	
-	health = 1;
-	healthMax = 1;
+	health = max_health;
+	healthMax = max_health;
 	dead = false;
 	dashing = false;
 
 	dashTimer = Timer(0.15);
-	dashRechargeTimer = Timer(0.5);
-	invincibilityTimer = Timer(0.3);
+	dashRechargeTimer = Timer(1);
+	invincibilityTimer = Timer(0.2);
 
 	acceleration = 6000;
 	deceleration = 7000;
@@ -20,7 +20,7 @@ Player::Player(sf::Vector2f pos) :
 
 	dashVelocity = 7000;
 
-	shootTimer = Timer(0.5);
+	shootTimer = Timer(0.3);
 
 	texture.loadFromFile("Assets/schizo.png");
 	sprite.setTexture(texture);

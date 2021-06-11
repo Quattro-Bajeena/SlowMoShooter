@@ -4,12 +4,12 @@
 
 void EndScreenState::Restart()
 {
-	states.push(new GameState(window, states));
+	states.push(new GameState(window, states, config));
 	EndState();
 }
 
-EndScreenState::EndScreenState(bool won, sf::RenderWindow& window, std::stack<State*>& states)
-	:State(window, states)
+EndScreenState::EndScreenState(bool won, sf::RenderWindow& window, std::stack<State*>& states, std::map<std::string, std::string>& config)
+	:State(window, states, config)
 {
 	wonTexture.loadFromFile("Assets/WonBackgorund.jpg");
 	lostTexture.loadFromFile("Assets/LostBackground.jpg");
@@ -34,7 +34,12 @@ EndScreenState::EndScreenState(bool won, sf::RenderWindow& window, std::stack<St
 
 	restartText.setFillColor(selectedColor);
 	exitText.setFillColor(defaultColor);
-	
+
+	restartText.setOutlineColor(sf::Color::White);
+	exitText.setOutlineColor(sf::Color::White);
+
+	restartText.setOutlineThickness(3);
+	exitText.setOutlineThickness(3);
 
 	if (won) {
 		background.setTexture(wonTexture);

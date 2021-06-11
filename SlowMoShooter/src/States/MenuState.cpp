@@ -4,11 +4,11 @@
 
 void MenuState::StartGame()
 {
-	states.push(new GameState(window, states));
+	states.push(new GameState(window, states, config));
 }
 
-MenuState::MenuState(sf::RenderWindow& window, std::stack<State*>& states)
-	:State(window, states)
+MenuState::MenuState(sf::RenderWindow& window, std::stack<State*>& states, std::map<std::string, std::string>& config)
+	:State(window, states, config)
 {
 	backgroundTexture.loadFromFile("Assets/MenuBackground.jpg");
 	background.setTexture(backgroundTexture);

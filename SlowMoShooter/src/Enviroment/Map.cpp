@@ -30,14 +30,14 @@ Map::Map(int width, int height, int tile_size)
 		}
 	}
 
-	int border = 5;
-	for (int i = 0; i <  width/4; i++) {
+	int border = 3;
+	for (int i = 0; i <  (width * height)/128; i++) {
 		sf::Sprite tree;
 		tree.scale(10, 10);
 		tree.setTexture(treeTexture);
 		tree.setPosition(
-			RNG::get().randomF(tileSize * border, width * (tileSize- border)),
-			RNG::get().randomF(tileSize *border , height * (tileSize- border))
+			RNG::get().randomF(tileSize * border, tileSize * (width - border)),
+			RNG::get().randomF(tileSize *border , tileSize * (height - border))
 		);
 		trees.push_back(tree);
 	}

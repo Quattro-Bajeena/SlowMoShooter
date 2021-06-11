@@ -19,9 +19,10 @@ protected:
 	bool scrollActive;
 
 	sf::Music music;
+	std::map<std::string, std::string>& config;
 
 public:
-	State(sf::RenderWindow& window, std::stack<State*>& states);
+	State(sf::RenderWindow& window, std::stack<State*>& states, std::map<std::string, std::string>& config);
 	virtual ~State();
 
 	//Accesors

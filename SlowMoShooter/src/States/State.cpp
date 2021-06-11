@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "State.h"
 
-State::State(sf::RenderWindow& window, std::stack<State*>& states)
-    :window(window), states(states),
+State::State(sf::RenderWindow& window, std::stack<State*>& states, std::map<std::string, std::string>& config)
+    :window(window), states(states), config(config),
     quit(false), 
     scroll(0), scrollActive(false)
 {

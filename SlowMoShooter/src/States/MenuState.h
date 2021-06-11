@@ -26,7 +26,7 @@ private:
 
 public:
 
-    MenuState(sf::RenderWindow& window, std::stack<State*>& states);
+    MenuState(sf::RenderWindow& window, std::stack<State*>& states, std::map<std::string, std::string>& config);
     ~MenuState();
 
     virtual void UpdateInput(const float dt) override;

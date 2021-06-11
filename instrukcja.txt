@@ -1,0 +1,13 @@
+Menu:
+wybór opcji - strzałka w górę/dół
+zatwierdzenie - Enter
+
+Gra:
+poruszanie się - WASD
+strzelanie - lewy przycisk myszy
+zwolnienie czasu - przytrzymanie prawego przycisku myszy
+aktywacja celu - przycisk E kiedy stoi się niedaleko niego
+oddalenie/przybliżanie widoku - strzałki góra/dół
+
+Wygrana:
+aktywacja wszystkich celów na mapie
